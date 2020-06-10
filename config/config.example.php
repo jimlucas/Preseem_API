@@ -6,7 +6,7 @@ $app_version = '';
 $app_url = '';
 
 # Locationof log file
-$logfile = __DIR__ . '/../log/preseem.log';
+$logfile = ROOT_PATH.'logs/preseem.log';
 
 # Process ID - to be used in the log entries
 $pid = getmypid();
