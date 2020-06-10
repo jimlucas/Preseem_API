@@ -44,7 +44,7 @@ First, read the requirement found in the main README.md file before continuing.
 
 You will need to know the path to the exports folder for where you installed the repo.  So, if you installed the repo to /home/freeside/preseem_api/  You will need to use ./preseem_api/export/freeside.php as the executable script in your command in the fields below.
 
-To use this repo in your exports, you will need to create a new Service Export and attach it to the service you are using to track your customers internet connection information.  I built this export around the svc_broadband service type.  No other service type has all the required fields used in the Preseem API.
+To use this repo in your exports, you will need to create a new Service Export and attach it to the service you are using to track your customers internet connection information.  I built this export around the svc_broadband service type.  No other service type has all the required fields used in the Preseem API.  And no other service type has a compatible export type available to use.
 
 In the Freeside UI, browse to Configuration -> Services -> Provisioning Exports.  Click on "Add a new export" and follow along below:
 
@@ -60,3 +60,10 @@ In the Freeside UI, browse to Configuration -> Services -> Provisioning Exports.
    Suspension Command: ./preseem_api/export/freeside.php --action=suspend --service_id='$description' --account_id=$custnum --account_name='$description' --service_speed_up=1 --service_speed_down=1
  Unsuspension Command: ./preseem_api/export/freeside.php --action=unsuspend --service_id='$description' --account_id=$custnum --account_name='$description' --service_speed_up=$speed_up --service_speed_down=$speed_down
 ```
+
+Now, make sure you attach this export to the existing svc_broadband service.  To do this, go to Configuration -> Services -> Service definitions  Click on the name of the internet service you want to have this export attached to.  On the "Edit Service Definition" page, just under the service Table type selection you should see the option to select your recently created export.
+
+> Note: If the export is not listed, you will need to make sure you selected the correct export type in the previous step.
+
+Once you locate the export, check the box next to its name.  Click 'Apply Changes' at the bottom of the page to save this change.
+
