@@ -4,7 +4,7 @@ include_once __DIR__ .'/../init.php';
 
 mylog('INFO', 'Freeside is initializing an export...');
 
-mylog('DEBUG', $argv);
+mylog('INFO', $argv);
 
 $object = null;
 $action = null;
@@ -13,9 +13,9 @@ $allowed_actions = array('insert', 'delete', 'replace', 'suspend', 'unsuspend');
 $longopts = array(
   'access_points' => array('old_ap_id::', 'ap_id:', 'ap_name:', 'ap_tower:', 'ap_ip_address:', ),
   'accounts'      => array('old_account_id::', 'account_id:', 'account_name:', ),
-  'packages'      => array('old_package_id::', 'package_id:', 'package_name:', 'package_speed_up::', 'package_speed_down::', ),
-  'services'      => array('old_service_id::', 'old_account_id::', 'service_id:', 'service_account:', 'service_speed_up::', 'service_speed_down::', 'service_package::', 'service_parent_device_id::', 'service_ip_address::', 'service_mac_address::', ),
-  'sites'         => array('old_site_id::', 'site_id:', 'site_name:', 'site_attachment::', ),
+  'packages'      => array('old_package_id::', 'package_id:', 'package_name:', 'package_up_speed::', 'package_down_speed::', ),
+  'services'      => array('old_service_id::', 'old_account_id::', 'service_id:', 'service_account:', 'service_up_speed::', 'service_down_speed::', 'service_package::', 'service_parent_device_id::', 'service_network_prefixes::', 'service_cpe_mac::', ),
+  'sites'         => array('old_site_id::', 'site_id:', 'site_name:', 'site_network_prefixes::', ),
 );
 
 /**
@@ -97,15 +97,37 @@ switch ($action) {
     alternate($text, 'Unsuspending');
 
     if ( empty($services_options['service_id']) ) { mylog('FATAL', '"service_id" must be specified'); usage(); }
-    if ( empty($services_options['service_speed_up']) ) { mylog('FATAL', '"service_speed_up" must be specified'); usage(); }
-    if ( empty($services_options['service_speed_down']) ) { mylog('FATAL', '"service_speed_down" must be specified'); usage(); }
+    if ( empty($services_options['service_up_speed']) ) { mylog('FATAL', '"service_up_speed" must be specified'); usage(); }
+    if ( empty($services_options['service_down_speed']) ) { mylog('FATAL', '"service_down_speed" must be specified'); usage(); }
+
+    $attachments = new stdClass();
+    if ( !empty($services_options['service_network_prefixes']) && filter_var($services_options['service_network_prefixes'], FILTER_VALIDATE_IP)) {
+      $attachments->network_prefixes = explode(',', $services_options['service_network_prefixes']);
+    } else {
+        mylog('FATAL', 'Service IP address provided but is not valid');
+        usage();
+    }
+
+    if ( !empty($services_options['service_cpe_mac']) ) {
+      if ( filter_var($services_options['service_cpe_mac'], FILTER_VALIDATE_MAC) ) {
+        $attachments->cpe_mac = strtolower($services_options['service_cpe_mac']);
+      } elseif ( preg_match('/^[a-f0-9]{12}$/i', $services_options['service_cpe_mac']) ) {
+        $attachments->cpe_mac = strtolower(join(':', str_split($services_options['service_cpe_mac'], 2)));
+      } else {
+        mylog('FATAL', 'Service MAC addr provided but does not validated');
+        usage();
+      }
+    }
     
     mylog('INFO', "{$text} service: {$services_options['service_id']}");
     $api->api_services_create([
       'id' => $services_options['service_id'],
+      'attachments' => array($attachments),
+      'up_speed' => intval($services_options['service_up_speed']),
+      'down_speed' => intval($services_options['service_down_speed']),
       'account' => $accounts_options['account_id'],
-      'up_speed' => intval($services_options['service_speed_up']),
-      'down_speed' => intval($services_options['service_speed_down']),
+#      'package' => (isset($services_options['service_package'])?$services_options['service_package']:''),
+      'parent_device_id' => (isset($services_options['service_parent_device_id'])?$services_options['service_parent_device_id']:''),
     ]);
 
     break;
@@ -137,11 +159,6 @@ Requred options each time this script is called:
 
   action  What we are doing with each object
 
-Section: service
-
-  Required:
-
-    id      
 
 Author: {$author_name} ({$author_email}) version:{$app_version}    Repo: {$app_url}
 
