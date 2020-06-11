@@ -1,9 +1,8 @@
-#!/usr/bin/php
 <?php
 
 include_once __DIR__ .'/../init.php';
 
-mylog('INFO', 'starting...');
+mylog('INFO', 'Freeside is initializing an export...');
 
 mylog('DEBUG', $argv);
 
@@ -12,11 +11,11 @@ $action = null;
 $allowed_actions = array('insert', 'delete', 'replace', 'suspend', 'unsuspend');
 
 $longopts = array(
-  'access_points' => array('ap_id:', 'ap_name:', 'ap_tower:', 'ap_ip_address:', 'old_ap_id::', ),
-  'accounts'      => array('account_id:', 'account_name:', 'old_account_id::', ),
-  'packages'      => array('package_id:', 'package_name:', 'package_speed_up::', 'package_speed_down::', 'old_package_id::', ),
-  'services'      => array('service_id:', 'service_account:', 'service_speed_up::', 'service_speed_down::', 'service_attachments::', 'service_package::', 'service_parent_device_id::', 'old_service_id::', ),
-  'sites'         => array('site_id:', 'site_name:', 'site_attachment::', 'old_site_id::', ),
+  'access_points' => array('old_ap_id::', 'ap_id:', 'ap_name:', 'ap_tower:', 'ap_ip_address:', ),
+  'accounts'      => array('old_account_id::', 'account_id:', 'account_name:', ),
+  'packages'      => array('old_package_id::', 'package_id:', 'package_name:', 'package_speed_up::', 'package_speed_down::', ),
+  'services'      => array('old_service_id::', 'old_account_id::', 'service_id:', 'service_account:', 'service_speed_up::', 'service_speed_down::', 'service_package::', 'service_parent_device_id::', 'service_ip_address::', 'service_mac_address::', ),
+  'sites'         => array('old_site_id::', 'site_id:', 'site_name:', 'site_attachment::', ),
 );
 
 /**
@@ -51,13 +50,14 @@ if ( !in_array($action, $allowed_actions) ) {
 }
 mylog('DEBUG', "Action = {$action}");
 
-# Get the key/value pairs passed to the script for the Account Object
-$accounts_options = getopt('', $longopts['accounts']);
-mylog('DEBUG', 'Account Object Arguments Received: ' .json_encode($accounts_options));
-
+foreach ( $longopts AS $name => $options ) {
+  # Get the key/value pairs passed to the script for the Account Object
+  ${"{$name}_options"} = getopt('', $options);
+  mylog('DEBUG', $name.' Object Arguments Received: ' .json_encode(${"{$name}_options"}));
+}
 # Get the key/value pairs passed to the script for the Service Object
-$services_options = getopt('', $longopts['services']);
-mylog('DEBUG', 'Service Object Arguments Received: ' .json_encode($services_options));
+#$services_options = getopt('', $longopts['services']);
+#mylog('DEBUG', 'Service Object Arguments Received: ' .json_encode($services_options));
 
 $api = new Preseem();
 
@@ -125,7 +125,7 @@ exit(0);
 
 function usage() {
 
-global $author_name, $author_email, $app_version, $github_url;
+global $author_name, $author_email, $app_version, $app_url;
 
 echo <<<DOC
 
