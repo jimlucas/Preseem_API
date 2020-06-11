@@ -1,6 +1,6 @@
 <?php
 
 function alternate(&$a, $b) {
-	return $a = ( $a ?? $b );
+	return $a = ( isset($a) ? $a : $b );
 }
 
