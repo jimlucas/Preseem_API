@@ -4,7 +4,7 @@ include_once __DIR__ .'/../init.php';
 
 mylog('INFO', 'Freeside is initializing an export...');
 
-mylog('INFO', $argv);
+mylog('DEBUG', $argv);
 
 $object = null;
 $action = null;
