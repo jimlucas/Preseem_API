@@ -48,18 +48,29 @@ To use this repo in your exports, you will need to create a new Service Export a
 
 In the Freeside UI, browse to Configuration -> Services -> Provisioning Exports.  Click on "Add a new export" and follow along below:
 
-```
-  Export Name: [Give it a good name]
-       Export: Choose "broadband_shellcommands" option
+Export Name: [Give it a good name]
+Export: Choose "broadband_shellcommands" option
 
-           Host or IP: localhost
-          Remote User: freeside
-       Insert Command: php ./preseem_api/exports/freeside.php --action=insert --service_id='$description' --account_id='$description' --custnum=$custnum --pkgnum='$pkgnum' --account_name='$description' --service_up_speed=$speed_up --service_down_speed=$speed_down --service_network_prefixes='$ip_addr' --service_cpe_mac='$mac_addr' --service_package='$pkgnum' --service_parent_device_id='$sectornum'
-       Delete Command: php ./preseem_api/exports/freeside.php --action=delete --service_id='$description' --account_id='$description' --custnum=$custnum --pkgnum='$pkgnum'
- Modification Command: php ./preseem_api/exports/freeside.php --action=replace --service_id='$new_description' --old_service_id='$old_description' --pkgnum=$new_pkgnum --old_pkgnum=$old_pkgnum --account_id='$new_description' --custnum=$new_custnum --old_account_id='$old_description' --account_name='$new_description' --service_up_speed=$new_speed_up --service_down_speed=$new_speed_down --service_cpe_mac='$new_mac_addr' --service_network_prefixes='$new_ip_addr' --service_package='$new_pkgnum' --service_parent_device_id='$new_sectornum'
-   Suspension Command: php ./preseem_api/exports/freeside.php --action=suspend --service_id='$description' --pkgnum=$pkgnum --account_id='$description' --custnum=$custnum --account_name='$description' --service_up_speed=1 --service_down_speed=1 --service_network_prefixes='$ip_addr' --service_cpe_mac='$mac_addr' --service_package='$pkgnum' --service_parent_device_id='$sectornum'
- Unsuspension Command: php ./preseem_api/exports/freeside.php --action=unsuspend --service_id='$description' --pkgnum=$pkgnum --account_id='$description' --custnum=$custnum --account_name='$description' --service_up_speed=$speed_up --service_down_speed=$speed_down --service_network_prefixes='$ip_addr' --service_cpe_mac='$mac_addr' --service_package='$pkgnum' --service_parent_device_id='$sectornum'
-```
+Host or IP:
+    localhost
+
+Remote User:
+    freeside
+
+Insert Command:
+    php ./preseem_api/exports/freeside.php --action=insert --service_id='$description' --account_id='$description' --custnum=$custnum --pkgnum='$pkgnum' --account_name='$description' --service_up_speed=$speed_up --service_down_speed=$speed_down --service_network_prefixes='$ip_addr' --service_cpe_mac='$mac_addr' --service_package='$pkgnum' --service_parent_device_id='$sectornum'
+
+Delete Command:
+    php ./preseem_api/exports/freeside.php --action=delete --service_id='$description' --account_id='$description' --custnum=$custnum --pkgnum='$pkgnum'
+
+Modification Command:
+    php ./preseem_api/exports/freeside.php --action=replace --service_id='$new_description' --old_service_id='$old_description' --pkgnum=$new_pkgnum --old_pkgnum=$old_pkgnum --account_id='$new_description' --custnum=$new_custnum --old_account_id='$old_description' --account_name='$new_description' --service_up_speed=$new_speed_up --service_down_speed=$new_speed_down --service_cpe_mac='$new_mac_addr' --service_network_prefixes='$new_ip_addr' --service_package='$new_pkgnum' --service_parent_device_id='$new_sectornum'
+
+Suspension Command:
+    php ./preseem_api/exports/freeside.php --action=suspend --service_id='$description' --pkgnum=$pkgnum --account_id='$description' --custnum=$custnum --account_name='$description' --service_up_speed=1 --service_down_speed=1 --service_network_prefixes='$ip_addr' --service_cpe_mac='$mac_addr' --service_package='$pkgnum' --service_parent_device_id='$sectornum'
+
+Unsuspension Command:
+    php ./preseem_api/exports/freeside.php --action=unsuspend --service_id='$description' --pkgnum=$pkgnum --account_id='$description' --custnum=$custnum --account_name='$description' --service_up_speed=$speed_up --service_down_speed=$speed_down --service_network_prefixes='$ip_addr' --service_cpe_mac='$mac_addr' --service_package='$pkgnum' --service_parent_device_id='$sectornum'
 
 Now, make sure you attach this export to the existing svc_broadband service.  To do this, go to Configuration -> Services -> Service definitions  Click on the name of the internet service you want to have this export attached to.  On the "Edit Service Definition" page, just under the service Table type selection you should see the option to select your recently created export.
 
