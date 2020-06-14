@@ -12,9 +12,9 @@ $allowed_actions = array('insert', 'delete', 'replace', 'suspend', 'unsuspend');
 
 $longopts = array(
   'access_points' => array('old_ap_id::', 'ap_id:', 'ap_name:', 'ap_tower:', 'ap_ip_address:', ),
-  'accounts'      => array('old_account_id::', 'account_id:', 'account_name:', ),
-  'packages'      => array('old_package_id::', 'package_id:', 'package_name:', 'package_up_speed::', 'package_down_speed::', ),
-  'services'      => array('old_service_id::', 'old_account_id::', 'service_id:', 'service_account:', 'service_up_speed::', 'service_down_speed::', 'service_package::', 'service_parent_device_id::', 'service_network_prefixes::', 'service_cpe_mac::', ),
+  'accounts'      => array('old_account_id::', 'account_id::', 'account_name:', 'pkgnum:', 'old_pkgnum:', ),
+  'packages'      => array('old_package_id::', 'package_id::', 'package_name:', 'package_up_speed::', 'package_down_speed::', ),
+  'services'      => array('old_service_id::', 'service_id::', 'service_account:', 'service_up_speed::', 'service_down_speed::', 'service_package::', 'service_parent_device_id::', 'service_network_prefixes::', 'service_cpe_mac::', 'pkgnum:', 'old_pkgnum:', 'old_account_id::', ),
   'sites'         => array('old_site_id::', 'site_id:', 'site_name:', 'site_network_prefixes::', ),
 );
 
@@ -66,46 +66,50 @@ $text = null;
 switch ($action) {
 
   case 'replace':
+    alternate($text, 'Modify existing');
+
     # Delete old account object
-    empty($accounts_options['old_account_id']) && mylog('FATAL', '"old_account_id" must be specified') && usage();
-    mylog('INFO', "Deleting old account: {$accounts_options['old_account_id']}");
-    $api->_api_delete('accounts', $accounts_options['old_account_id']);
+    if ( empty($accounts_options['old_account_id']) ) { mylog('FATAL', '"old_account_id" must be specified'); usage(); }
+    if ( empty($accounts_options['old_pkgnum']) ) { mylog('FATAL', '"old_pkgnum" must be specified'); usage(); }
+    mylog('INFO', "Deleting old account: {$accounts_options['old_account_id']}_{$accounts_options['old_pkgnum']}");
+    $api->_api_delete('accounts', $accounts_options['old_account_id'].'_'.$accounts_options['old_pkgnum']);
 
     # Delete old service object
-    empty($services_options['old_service_id']) && mylog('FATAL', '"old_service_id" must be specified') && usage();
+    if ( empty($services_options['old_service_id']) ) { mylog('FATAL', '"old_service_id" must be specified'); usage(); }
     mylog('INFO', "Deleting old service: {$services_options['old_service_id']}");
     $api->_api_delete('services', $services_options['old_service_id']);
 
-    alternate($text, 'Modify existing');
-
   case 'insert':
-
     alternate($text, 'Creating new');
 
     if ( empty($accounts_options['account_id']) ) { mylog('FATAL', '"account_id" must be specified'); usage(); }
     if ( empty($accounts_options['account_name']) ) { mylog('FATAL', '"account_name" must be specified'); usage(); }
+    if ( empty($accounts_options['pkgnum']) ) { mylog('FATAL', '"pkgnum" must be specified'); usage(); }
 
-    mylog('INFO', "{$text} account: {$accounts_options['account_id']}");
+    mylog('INFO', "{$text} account: {$accounts_options['account_id']}_{$accounts_options['pkgnum']}");
     $api->api_accounts_create([
-      'id' => $accounts_options['account_id'],
+      'id' => $accounts_options['account_id'].'_'.$accounts_options['pkgnum'],
       'name' => $accounts_options['account_name'],
     ]);
 
   case 'suspend':
     alternate($text, 'Suspending');
+
   case 'unsuspend':
     alternate($text, 'Unsuspending');
 
+    if ( empty($accounts_options['account_id']) ) { mylog('FATAL', '"account_id" must be specified'); usage(); }
     if ( empty($services_options['service_id']) ) { mylog('FATAL', '"service_id" must be specified'); usage(); }
+    if ( empty($services_options['pkgnum']) ) { mylog('FATAL', '"pkgnum" must be specified'); usage(); }
     if ( empty($services_options['service_up_speed']) ) { mylog('FATAL', '"service_up_speed" must be specified'); usage(); }
     if ( empty($services_options['service_down_speed']) ) { mylog('FATAL', '"service_down_speed" must be specified'); usage(); }
 
     $attachments = new stdClass();
-    if ( !empty($services_options['service_network_prefixes']) && filter_var($services_options['service_network_prefixes'], FILTER_VALIDATE_IP)) {
+    if ( !empty($services_options['service_network_prefixes']) && filter_var($services_options['service_network_prefixes'], FILTER_VALIDATE_IP) ) {
       $attachments->network_prefixes = explode(',', $services_options['service_network_prefixes']);
     } else {
-        mylog('FATAL', 'Service IP address provided but is not valid');
-        usage();
+      mylog('FATAL', 'Service IP address provided but is not valid');
+      usage();
     }
 
     if ( !empty($services_options['service_cpe_mac']) ) {
@@ -125,7 +129,7 @@ switch ($action) {
       'attachments' => array($attachments),
       'up_speed' => intval($services_options['service_up_speed']),
       'down_speed' => intval($services_options['service_down_speed']),
-      'account' => $accounts_options['account_id'],
+      'account' => $accounts_options['account_id'].'_'.$services_options['pkgnum'],
 #      'package' => (isset($services_options['service_package'])?$services_options['service_package']:''),
       'parent_device_id' => (isset($services_options['service_parent_device_id'])?$services_options['service_parent_device_id']:''),
     ]);
@@ -133,8 +137,16 @@ switch ($action) {
     break;
 
   case 'delete':
+
+    if ( empty($accounts_options['account_id']) ) { mylog('FATAL', '"account_id" must be specified'); usage(); }
+    if ( empty($services_options['pkgnum']) ) { mylog('FATAL', '"pkgnum" must be specified'); usage(); }
+    mylog('INFO', "Deleting Account: {$accounts_options['account_id']}_{$accounts_options['pkgnum']}");
+    $api->_api_delete('accounts', $accounts_options['account_id'].'_'.$services_options['pkgnum']);
+
+    if ( empty($services_options['service_id']) ) { mylog('FATAL', '"service_id" must be specified'); usage(); }
     mylog('INFO', "Deleting Service: {$services_options['service_id']}");
     $api->_api_delete('services', $services_options['service_id']);
+
     break;
 
   default:
@@ -163,6 +175,6 @@ Requred options each time this script is called:
 Author: {$author_name} ({$author_email}) version:{$app_version}    Repo: {$app_url}
 
 DOC;
-  die(127);
+die();
 }
 
