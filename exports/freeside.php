@@ -76,8 +76,8 @@ switch ($action) {
 
     # Delete old service object
     if ( empty($services_options['old_service_id']) ) { mylog('FATAL', '"old_service_id" must be specified'); usage(); }
-    mylog('INFO', "Deleting old service: {$services_options['old_service_id']}");
-    $api->_api_delete('services', $services_options['old_service_id']);
+    mylog('INFO', "Deleting old service: {$services_options['old_service_id']}_{$accounts_options['pkgnum']}");
+    $api->_api_delete('services', $services_options['old_service_id'].'_'.$accounts_options['old_pkgnum']);
 
   case 'insert':
     alternate($text, 'Creating new');
@@ -122,10 +122,14 @@ switch ($action) {
         usage();
       }
     }
-    
-    mylog('INFO', "{$text} service: {$services_options['service_id']}");
+
+    # This is a duplicate check from the insert section. But, that section is 
+    # not called if we are only doing a suspend or unsuspend action.
+    if ( empty($accounts_options['account_id']) ) { mylog('FATAL', '"account_id" must be specified'); usage(); }
+
+    mylog('INFO', "{$text} service: {$services_options['service_id']}_{$services_options['pkgnum']}");
     $api->api_services_create([
-      'id' => $services_options['service_id'],
+      'id' => $services_options['service_id'].'_'.$services_options['pkgnum'],
       'attachments' => array($attachments),
       'up_speed' => intval($services_options['service_up_speed']),
       'down_speed' => intval($services_options['service_down_speed']),
@@ -144,8 +148,8 @@ switch ($action) {
     $api->_api_delete('accounts', $accounts_options['account_id'].'_'.$services_options['pkgnum']);
 
     if ( empty($services_options['service_id']) ) { mylog('FATAL', '"service_id" must be specified'); usage(); }
-    mylog('INFO', "Deleting Service: {$services_options['service_id']}");
-    $api->_api_delete('services', $services_options['service_id']);
+    mylog('INFO', "Deleting Service: {$services_options['service_id']}_{$services_options['pkgnum']}");
+    $api->_api_delete('services', $services_options['service_id'].'_'.$services_options['pkgnum']);
 
     break;
 
