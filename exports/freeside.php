@@ -76,8 +76,8 @@ switch ($action) {
 
     # Delete old service object
     if ( empty($services_options['old_service_id']) ) { mylog('FATAL', '"old_service_id" must be specified'); usage(); }
-    mylog('INFO', "Deleting old service: {$services_options['old_service_id']}_{$accounts_options['pkgnum']}");
-    $api->_api_delete('services', $services_options['old_service_id'].'_'.$accounts_options['old_pkgnum']);
+    mylog('INFO', "Deleting old service: {$services_options['old_service_id']}");
+    $api->_api_delete('services', $services_options['old_service_id']);
 
   case 'insert':
     alternate($text, 'Creating new');
@@ -104,15 +104,19 @@ switch ($action) {
     if ( empty($services_options['service_up_speed']) ) { mylog('FATAL', '"service_up_speed" must be specified'); usage(); }
     if ( empty($services_options['service_down_speed']) ) { mylog('FATAL', '"service_down_speed" must be specified'); usage(); }
 
-    $attachments = new stdClass();
-    if ( !empty($services_options['service_network_prefixes']) && filter_var($services_options['service_network_prefixes'], FILTER_VALIDATE_IP) ) {
-      $attachments->network_prefixes = explode(',', $services_options['service_network_prefixes']);
-    } else {
-      mylog('FATAL', 'Service IP address provided but is not valid');
-      usage();
+    if ( !empty($services_options['service_network_prefixes']) ) {
+      $attachments = new stdClass();
+      if ( filter_var($services_options['service_network_prefixes'], FILTER_VALIDATE_IP) ) {
+        $attachments->network_prefixes = explode(',', $services_options['service_network_prefixes']);
+      } else {
+        mylog('FATAL', 'Service IP address provided but is not valid');
+        usage();
+      }
+
     }
 
     if ( !empty($services_options['service_cpe_mac']) ) {
+      $attachments = (isset($attachments) ? $attachments : new stdClass());
       if ( filter_var($services_options['service_cpe_mac'], FILTER_VALIDATE_MAC) ) {
         $attachments->cpe_mac = strtolower($services_options['service_cpe_mac']);
       } elseif ( preg_match('/^[a-f0-9]{12}$/i', $services_options['service_cpe_mac']) ) {
@@ -127,16 +131,25 @@ switch ($action) {
     # not called if we are only doing a suspend or unsuspend action.
     if ( empty($accounts_options['account_id']) ) { mylog('FATAL', '"account_id" must be specified'); usage(); }
 
-    mylog('INFO', "{$text} service: {$services_options['service_id']}_{$services_options['pkgnum']}");
-    $api->api_services_create([
-      'id' => $services_options['service_id'].'_'.$services_options['pkgnum'],
-      'attachments' => array($attachments),
+    mylog('INFO', "{$text} service: {$services_options['service_id']}");
+
+    $obj = array(
+      'id' => $services_options['service_id'],
       'up_speed' => intval($services_options['service_up_speed']),
       'down_speed' => intval($services_options['service_down_speed']),
       'account' => $accounts_options['account_id'].'_'.$services_options['pkgnum'],
-#      'package' => (isset($services_options['service_package'])?$services_options['service_package']:''),
-      'parent_device_id' => (isset($services_options['service_parent_device_id'])?$services_options['service_parent_device_id']:''),
-    ]);
+    );
+
+    if ( isset($attachments) )
+      $obj['attachments'] = array($attachments);
+
+    if ( isset($services_options['service_package']) )
+      $obj['package'] = $services_options['service_package'];
+
+    if ( isset($services_options['service_parent_device_id']) )
+      $obj['parent_device_id'] = $services_options['service_parent_device_id'];
+
+    $api->api_services_create($obj);
 
     break;
 
@@ -148,8 +161,8 @@ switch ($action) {
     $api->_api_delete('accounts', $accounts_options['account_id'].'_'.$services_options['pkgnum']);
 
     if ( empty($services_options['service_id']) ) { mylog('FATAL', '"service_id" must be specified'); usage(); }
-    mylog('INFO', "Deleting Service: {$services_options['service_id']}_{$services_options['pkgnum']}");
-    $api->_api_delete('services', $services_options['service_id'].'_'.$services_options['pkgnum']);
+    mylog('INFO', "Deleting Service: {$services_options['service_id']}");
+    $api->_api_delete('services', $services_options['service_id']);
 
     break;
 
