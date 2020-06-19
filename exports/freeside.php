@@ -1,6 +1,6 @@
 <?php
 
-include_once __DIR__ .'/../init.php';
+include_once __DIR__ . '/../init.php';
 
 mylog('INFO', 'Freeside is initializing an export...');
 
