@@ -1,3 +1,4 @@
-local/
+*.bak
 config/config.local.php
+local/
 logs/
