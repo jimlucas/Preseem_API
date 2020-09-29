@@ -1,25 +1,4 @@
-## Integration with Freeside v3 or v4 service exports
-
-One available export using this set of scripts is build for [Freeside](http://freeside.biz) v3 or v4
-
-## Brief ramblings
-
-Freeside is setup in such a way that it runs most of the Peal daemons as the freeside system user.
-
-Exports are created and attached to services which in turn are attached to packages ordered and billed on customer accounts.
-
-## Requirements
-
-Before proceeding, read the README.md file found in the base folder of this project.  It details what needs to be done prior to being able to use these scripts and has nothing to do with specific instructions for getting it to work with Freeside.  Those instructions follow...
-
-Regarding Freeside specific requirements.  At this time, there are none.
-
-## Installation
-
-There happens to be two different methods this code base can be used with Freeside.  When executing the export Freeside can call the scripts via a remote ssh command execution call or by issuing an HTTP POST request.  I will provide the instructions for setting up the remote ssh command execution method.
-
-- [SSH based remote code execution call](./README.freeside.ssh.md)
-- [HTTP POST requrest](./README.freeside.http.md)
+## Initial server setup and configuration
 
 For Freeside to properly process the service export,  freeside server has to have shared pass-key access to a maching that has this repo installed.  The easiest way for me to get this working without requireing an addition remote machine to work on, it to setup and configure the package to run in the home directory of the freeside user on the freeside server itself.
 
