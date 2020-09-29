@@ -1,9 +1,9 @@
 <?php
 
-$author_name = '';
-$author_email = '';
-$app_version = '';
-$app_url = '';
+$author_name = 'Jim Lucas';
+$author_email = 'jlucas@cmsws.com';
+$app_version = '0.0.1';
+$app_url = 'https://github.com/jimlucas/Preseem_API';
 
 # Locationof log file
 $logfile = ROOT_PATH.'logs/preseem.log';
