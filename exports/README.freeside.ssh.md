@@ -28,7 +28,7 @@ Once you have this working, move on to configuring Freeside to use this Preseem 
 
 ## Freeside installation and configuration
 
-First, read the requirement found in the main `README.md` file before continuing.
+Before continuing, read the requirements found in the top level [README.md](../README.md) file, then read the requirements found in the main Freeside exports [README.md](./README.freeside.md) file.
 
 You will need to know the path to the exports folder for where you installed the repo.  So, if you installed the repo to `/home/freeside/preseem_api/`  You will need to use `./preseem_api/export/freeside.php` as the executable script in your command in the fields below.
 
@@ -80,3 +80,121 @@ Ideally, you will have ssh access to the server where these scripts are installe
 ```
 
 Navigate to one of your active customers that has a package with the service you just linked to the export.  No matter the state of the package, you can now provision, un-provision, suspend, un-suspend, or cancel the service.  Each of these actions will call their respective commands provisioned in the export.  It can take upwords of 60 seconds, but you should see something in the the `preseem.log` file after shortly.
+
+```
+## Options
+
+Available Options
+
+### Access Points
+
+    --old_ap_id
+               Access Point unique ID that is being replaced
+
+#### Required
+
+    --ap_id    Access Point unique ID
+
+    --ap_name  Access Point name
+
+    --ap_tower Access Point tower name
+
+    --ap_ip_address
+               Access Point management ip address
+
+### Accounts
+
+    --old_account_id
+               Account unique ID that is being replaced
+
+#### Required
+
+    --account_id
+               Account unique ID
+
+    --account_name
+               Account owner name
+
+### Packages
+
+    --old_package_id
+               Package unique ID that is being replaced
+
+#### Required
+
+    --package_id
+               Package unique ID
+
+    --package_name
+               Package name
+
+#### Optional
+
+    --package_up_speed
+               The upstream rate limit, in Kbps. A value of 0 is treated as
+               not set. If not set, this field is omitted in the returned
+               json. A negative speed is converted to 0
+
+    --package_down_speed
+               The downstream rate limit, in Kbps. A value of 0 is treated as
+               not set. If not set, this field is omitted in the returned
+               json. A negative speed is converted to 0
+
+### Services
+
+    --old_service_id
+               Service unique ID that is being replaced
+
+#### Required
+
+    --service_id
+               Service unique ID
+
+    --service_account
+               Account id for service
+
+#### Optional
+
+    --service_up_speed
+               The upstream rate limit, in Kbps. A value of 0 is treated as
+               not set. If not set, this field is omitted in the returned
+               json. A negative speed is converted to 0
+
+    --service_down_speed
+               The downstream rate limit, in Kbps. A value of 0 is treated as
+               not set. If not set, this field is omitted in the returned
+               json. A negative speed is converted to 0
+
+    --service_package
+               Package ID of the service
+
+    --service_parent_device_id
+               This is the unique id for the parent device.
+               E.g. An access point
+
+    --service_network_prefixes
+               JSON encoded array of strings.  Optional only when cpe_mac is
+               present. /32 is currently the only prefix supported
+
+    --service_cpe_mac
+               Optional only when network_prefixes array is present
+
+### Sites
+
+    --old_site_id
+               Site unique ID that is being replaced
+
+#### Required
+
+    --site_id  Site unique ID
+
+    --site_name
+               Site name
+
+#### Optional
+
+    --site_network_prefixes
+               JSON encoded array of strings. /32 is currently the only prefix
+               supported
+
+```
