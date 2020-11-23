@@ -71,9 +71,7 @@ switch ($action) {
     # Delete old account object
     if ( empty($accounts_options['old_account_id']) ) { mylog('FATAL', '"old_account_id" must be specified'); usage(); }
     $accounts_options['old_account_id'] = trim($accounts_options['old_account_id']);
-    if ( empty($accounts_options['old_pkgnum']) ) { mylog('FATAL', '"old_pkgnum" must be specified'); usage(); }
-    mylog('INFO', "Deleting old account: {$accounts_options['old_account_id']}_{$accounts_options['old_pkgnum']}");
-    $api->_api_delete('accounts', $accounts_options['old_account_id'].'_'.$accounts_options['old_pkgnum']);
+    $api->_api_delete('accounts', $accounts_options['old_account_id']);
 
     # Delete old service object
     if ( empty($services_options['old_service_id']) ) { mylog('FATAL', '"old_service_id" must be specified'); usage(); }
@@ -88,11 +86,10 @@ switch ($action) {
     $accounts_options['account_id'] = trim($accounts_options['account_id']);
     if ( empty($accounts_options['account_name']) ) { mylog('FATAL', '"account_name" must be specified'); usage(); }
     $accounts_options['account_name'] = trim($accounts_options['account_name']);
-    if ( empty($accounts_options['pkgnum']) ) { mylog('FATAL', '"pkgnum" must be specified'); usage(); }
 
-    mylog('INFO', "{$text} account: {$accounts_options['account_id']}_{$accounts_options['pkgnum']}");
+    mylog('INFO', "{$text} account: {$accounts_options['account_id']}");
     $api->api_accounts_create([
-      'id' => $accounts_options['account_id'].'_'.$accounts_options['pkgnum'],
+      'id' => $accounts_options['account_id'],
       'name' => $accounts_options['account_name'],
     ]);
 
@@ -106,7 +103,6 @@ switch ($action) {
     $accounts_options['account_id'] = trim($accounts_options['account_id']);
     if ( empty($services_options['service_id']) ) { mylog('FATAL', '"service_id" must be specified'); usage(); }
     $services_options['service_id'] = trim($services_options['service_id']);
-    if ( empty($services_options['pkgnum']) ) { mylog('FATAL', '"pkgnum" must be specified'); usage(); }
     if ( empty($services_options['service_up_speed']) ) { mylog('FATAL', '"service_up_speed" must be specified'); usage(); }
     if ( empty($services_options['service_down_speed']) ) { mylog('FATAL', '"service_down_speed" must be specified'); usage(); }
 
@@ -143,7 +139,7 @@ switch ($action) {
       'id' => $services_options['service_id'],
       'up_speed' => intval($services_options['service_up_speed']),
       'down_speed' => intval($services_options['service_down_speed']),
-      'account' => $accounts_options['account_id'].'_'.$services_options['pkgnum'],
+      'account' => $accounts_options['account_id'],
     );
 
     if ( isset($attachments) )
@@ -163,9 +159,8 @@ switch ($action) {
 
     if ( empty($accounts_options['account_id']) ) { mylog('FATAL', '"account_id" must be specified'); usage(); }
     $accounts_options['account_id'] = trim($accounts_options['account_id']);
-    if ( empty($services_options['pkgnum']) ) { mylog('FATAL', '"pkgnum" must be specified'); usage(); }
-    mylog('INFO', "Deleting Account: {$accounts_options['account_id']}_{$accounts_options['pkgnum']}");
-    $api->_api_delete('accounts', $accounts_options['account_id'].'_'.$services_options['pkgnum']);
+    mylog('INFO', "Deleting Account: {$accounts_options['account_id']}");
+    $api->_api_delete('accounts', $accounts_options['account_id']);
 
     if ( empty($services_options['service_id']) ) { mylog('FATAL', '"service_id" must be specified'); usage(); }
     $services_options['service_id'] = trim($services_options['service_id']);
