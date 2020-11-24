@@ -1,5 +1,13 @@
 <?php
 
+if ( PHP_SAPI === 'cli' ) {
+  define('METHOD', 'cli');
+} else if ( isset($_SERVER['REQUEST_METHOD']) ) {
+  define('METHOD', $_SERVER['REQUEST_METHOD']);
+} else {
+  die( 'Unknow Method' );
+}
+
 define('ROOT_PATH', __DIR__ .'/');
 
 foreach ( glob(ROOT_PATH.'config/config\.*\.php') AS $filename ) {

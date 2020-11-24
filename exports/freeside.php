@@ -4,7 +4,8 @@ include_once __DIR__ . '/../init.php';
 
 mylog('INFO', 'Freeside is initializing an export...');
 
-mylog('DEBUG', $argv);
+#mylog('DEBUG', $argv);
+(METHOD === 'cli' ) ? mylog('DEBUG', $argv):'';
 
 $object = null;
 $action = null;
@@ -39,6 +40,7 @@ mylog('INFO', "Object = {$object}");
 
 
 # check that a valid action was specified
+#$options = my_getopt('', array('action:'));
 $options = getopt('', array('action:'));
 if ( $options === false || empty($options) ) {
   mylog('FATAL', 'Action not specified');
