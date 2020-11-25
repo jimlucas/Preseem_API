@@ -91,8 +91,12 @@ Available Options
     --use_api  This option will allow the us to perform an XMLRPC call to the 
                Freeside XMLRPC API.  You are required to enable the XMLRPC 
                API within Freeside.  Goto Configuration->Settings->API and 
-               enable the XMLRPC service and set a secret.  When used, both 
-               --custnum and --pkgnum are required to be populated.
+               set XMLRPC_API to YES and set a value for api_shared_secret.
+               After enabling and setting the secret you need to restart the
+               freeside daemon so it will enable the XMLRPC API daemon.
+
+               When this option is used, both --custnum and --pkgnum are 
+               required to be populated.
 
     --custnum  Customer number from Freeside
 
