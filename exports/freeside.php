@@ -13,7 +13,7 @@ $allowed_actions = array('insert', 'delete', 'replace', 'suspend', 'unsuspend');
 
 $longopts = array(
   'access_points' => array('old_ap_id::', 'ap_id:', 'ap_name:', 'ap_tower:', 'ap_ip_address:', ),
-  'accounts'      => array('old_account_id::', 'account_id::', 'account_name:', 'pkgnum:', 'old_pkgnum:', 'use_api:', ),
+  'accounts'      => array('old_account_id::', 'account_id::', 'account_name:', 'custnum:', 'pkgnum:', 'old_pkgnum:', 'use_api:', ),
   'packages'      => array('old_package_id::', 'package_id::', 'package_name:', 'package_up_speed::', 'package_down_speed::', ),
   'services'      => array('old_service_id::', 'service_id::', 'service_account:', 'service_up_speed::', 'service_down_speed::', 'service_package::', 'service_parent_device_id::', 'service_network_prefixes::', 'service_cpe_mac::', 'pkgnum:', 'old_pkgnum:', 'old_account_id::', 'use_api:', ),
   'sites'         => array('old_site_id::', 'site_id:', 'site_name:', 'site_network_prefixes::', ),
@@ -88,8 +88,6 @@ switch ($action) {
       }
     }
 
-#    if ( empty($services_options['old_service_id']) ) { mylog('FATAL', '"old_service_id" must be specified'); usage(); }
-#    $services_options['old_service_id'] = trim($services_options['old_service_id']);
     mylog('INFO', "Deleting old service: {$services_options['old_service_id']}");
     $api->_api_delete('services', $services_options['old_service_id']);
 
@@ -102,7 +100,8 @@ switch ($action) {
       if ( empty($accounts_options['account_name']) ) { mylog('FATAL', '"account_name" must be specified or obtained via the Freeside API'); usage(); }
       $accounts_options['account_name'] = trim($accounts_options['account_name']);
     } else {
-      if ( ($account_name = get_customer_name($accounts_options['account_id'])) !== false ) {
+      if ( empty($accounts_options['custnum']) ) { mylog('FATAL', 'When using --use_api the "--custnum" must be specified'); usage(); }
+      if ( ($account_name = get_customer_name($accounts_options['custnum'])) !== false ) {
         $accounts_options['account_name'] = trim($account_name);
       } else {
         mylog('FATAL', '"account_name" must be specified or obtained via the Freeside API'); usage();
