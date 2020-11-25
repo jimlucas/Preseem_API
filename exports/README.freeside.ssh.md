@@ -86,6 +86,18 @@ Navigate to one of your active customers that has a package with the service you
 
 Available Options
 
+### Global options
+
+    --use_api  This option will allow the us to perform an XMLRPC call to the 
+               Freeside XMLRPC API.  You are required to enable the XMLRPC 
+               API within Freeside.  Goto Configuration->Settings->API and 
+               enable the XMLRPC service and set a secret.  When used, both 
+               --custnum and --pkgnum are required to be populated.
+
+    --custnum  Customer number from Freeside
+
+    --pkgnum   Package number for package associated to the service
+
 ### Access Points
 
     --old_ap_id
